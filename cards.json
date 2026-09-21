@@ -1,0 +1,373 @@
+{
+ "_readme": "name = deck title. back = card back: {\"color\":\"#hex\"} and/or {\"image\":\"url or data URI\"}. Each card needs at least one face style: (1) \"image\": \"cards/dragon.png\" (optional \"caption\"), (2) \"rank\" + \"suit\" for a classic playing-card face, or (3) \"title\" + \"text\" for a text card. Optional on any card: \"color\" (ink), \"bg\" (background CSS color), \"count\" (how many copies), \"id\", \"name\".",
+ "name": "Standard 52-card deck",
+ "back": {
+  "color": "#7a1f2b"
+ },
+ "cards": [
+  {
+   "id": "AS",
+   "name": "Ace of Spades",
+   "rank": "A",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "2S",
+   "name": "Two of Spades",
+   "rank": "2",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "3S",
+   "name": "Three of Spades",
+   "rank": "3",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "4S",
+   "name": "Four of Spades",
+   "rank": "4",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "5S",
+   "name": "Five of Spades",
+   "rank": "5",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "6S",
+   "name": "Six of Spades",
+   "rank": "6",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "7S",
+   "name": "Seven of Spades",
+   "rank": "7",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "8S",
+   "name": "Eight of Spades",
+   "rank": "8",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "9S",
+   "name": "Nine of Spades",
+   "rank": "9",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "10S",
+   "name": "Ten of Spades",
+   "rank": "10",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "JS",
+   "name": "Jack of Spades",
+   "rank": "J",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "QS",
+   "name": "Queen of Spades",
+   "rank": "Q",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "KS",
+   "name": "King of Spades",
+   "rank": "K",
+   "suit": "♠",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "AH",
+   "name": "Ace of Hearts",
+   "rank": "A",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "2H",
+   "name": "Two of Hearts",
+   "rank": "2",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "3H",
+   "name": "Three of Hearts",
+   "rank": "3",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "4H",
+   "name": "Four of Hearts",
+   "rank": "4",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "5H",
+   "name": "Five of Hearts",
+   "rank": "5",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "6H",
+   "name": "Six of Hearts",
+   "rank": "6",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "7H",
+   "name": "Seven of Hearts",
+   "rank": "7",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "8H",
+   "name": "Eight of Hearts",
+   "rank": "8",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "9H",
+   "name": "Nine of Hearts",
+   "rank": "9",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "10H",
+   "name": "Ten of Hearts",
+   "rank": "10",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "JH",
+   "name": "Jack of Hearts",
+   "rank": "J",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "QH",
+   "name": "Queen of Hearts",
+   "rank": "Q",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "KH",
+   "name": "King of Hearts",
+   "rank": "K",
+   "suit": "♥",
+   "color": "#c0392b"
+  },
+  {
+   "id": "AD",
+   "name": "Ace of Diamonds",
+   "rank": "A",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "2D",
+   "name": "Two of Diamonds",
+   "rank": "2",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "3D",
+   "name": "Three of Diamonds",
+   "rank": "3",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "4D",
+   "name": "Four of Diamonds",
+   "rank": "4",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "5D",
+   "name": "Five of Diamonds",
+   "rank": "5",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "6D",
+   "name": "Six of Diamonds",
+   "rank": "6",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "7D",
+   "name": "Seven of Diamonds",
+   "rank": "7",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "8D",
+   "name": "Eight of Diamonds",
+   "rank": "8",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "9D",
+   "name": "Nine of Diamonds",
+   "rank": "9",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "10D",
+   "name": "Ten of Diamonds",
+   "rank": "10",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "JD",
+   "name": "Jack of Diamonds",
+   "rank": "J",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "QD",
+   "name": "Queen of Diamonds",
+   "rank": "Q",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "KD",
+   "name": "King of Diamonds",
+   "rank": "K",
+   "suit": "♦",
+   "color": "#c0392b"
+  },
+  {
+   "id": "AC",
+   "name": "Ace of Clubs",
+   "rank": "A",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "2C",
+   "name": "Two of Clubs",
+   "rank": "2",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "3C",
+   "name": "Three of Clubs",
+   "rank": "3",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "4C",
+   "name": "Four of Clubs",
+   "rank": "4",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "5C",
+   "name": "Five of Clubs",
+   "rank": "5",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "6C",
+   "name": "Six of Clubs",
+   "rank": "6",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "7C",
+   "name": "Seven of Clubs",
+   "rank": "7",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "8C",
+   "name": "Eight of Clubs",
+   "rank": "8",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "9C",
+   "name": "Nine of Clubs",
+   "rank": "9",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "10C",
+   "name": "Ten of Clubs",
+   "rank": "10",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "JC",
+   "name": "Jack of Clubs",
+   "rank": "J",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "QC",
+   "name": "Queen of Clubs",
+   "rank": "Q",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  },
+  {
+   "id": "KC",
+   "name": "King of Clubs",
+   "rank": "K",
+   "suit": "♣",
+   "color": "#1c1c1c"
+  }
+ ]
+}

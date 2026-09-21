@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Card Table for Four</title>
+<style>
+:root{
+  --hdr:.085; --hnd:.2; --cwf:.095;
+  --back1:#7a1f2b; --backimg:none;
+  --ink-page:#e9e2d3;
+}
+*{box-sizing:border-box}
+html{background:#100e0c;scroll-snap-type:y proximity;scroll-behavior:smooth}
+body{margin:0;color:var(--ink-page);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+a{color:#e9b44c}
+
+/* ---------- setup panel ---------- */
+.setup{max-width:940px;margin:0 auto;padding:30px 20px 14px}
+h1{margin:0 0 6px;font:700 clamp(28px,4.4vw,44px)/1.05 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;letter-spacing:.005em}
+.lede{margin:0 0 14px;color:#bdb49f;max-width:62ch}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:12px 0}
+.btn{display:inline-block;border:1px solid #54483b;background:#231d17;color:#f1e9d8;padding:.5em .95em;border-radius:8px;font:inherit;cursor:pointer}
+.btn:hover{background:#2e261e}
+.btn:focus-visible,.bar button:focus-visible,.ctx button:focus-visible,#rot:focus-visible{outline:2px solid #e9b44c;outline-offset:2px}
+.chk{display:flex;gap:.5em;align-items:center;cursor:pointer}
+.jump{display:flex;gap:.9em;flex-wrap:wrap}
+.status{margin:6px 0 10px;color:#a89f8b;min-height:1.5em}
+.status.err{color:#ff9d8a}
+details{color:#cfc6b2;max-width:70ch}
+summary{cursor:pointer;color:#e9e2d3}
+details ul{margin:.6em 0 0;padding-left:1.2em}
+details li{margin:.25em 0}
+kbd{font:inherit;font-size:.9em;padding:.05em .4em;border:1px solid #54483b;border-radius:4px;background:#231d17}
+
+/* ---------- a seat ---------- */
+.seat{--S:min(96vw,calc(100vh - 24px),1100px);width:var(--S);height:var(--S);margin:12px auto;position:relative;scroll-snap-align:center}
+@supports (height:100dvh){.seat{--S:min(96vw,calc(100dvh - 24px),1100px)}}
+.rot{position:absolute;inset:0;overflow:hidden;border-radius:calc(var(--S)*.018);background:#2a1a10;
+  --cw:calc(var(--S)*var(--cwf));container-type:inline-size;user-select:none;-webkit-user-select:none;
+  box-shadow:0 0 0 calc(var(--S)*.006) #3d2818,0 24px 60px rgba(0,0,0,.55);transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+
+.felt{position:absolute;left:0;right:0;top:calc(var(--S)*var(--hdr));bottom:calc(var(--S)*var(--hnd));
+  background:radial-gradient(ellipse at 50% 50%,#2c7d5d 0%,#1f5f47 55%,#133f31 100%);
+  box-shadow:inset 0 0 calc(var(--S)*.07) rgba(0,0,0,.6)}
+.felt::before{content:"";position:absolute;inset:0;opacity:.3;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.center{position:absolute;left:50%;top:50%;width:calc(var(--cw)*1.22);height:calc(var(--cw)*1.7);transform:translate(-50%,-50%);
+  border:2px dashed rgba(255,255,255,.2);border-radius:calc(var(--cw)*.1);pointer-events:none}
+
+.hand{position:absolute;left:0;right:0;bottom:0;height:calc(var(--S)*var(--hnd));
+  background:linear-gradient(#1d1611,#271d16);border-top:calc(var(--S)*.007) solid var(--accent);
+  box-shadow:inset 0 calc(var(--S)*.02) calc(var(--S)*.035) rgba(0,0,0,.55)}
+.hand .lab{position:absolute;left:2.2%;top:5%;font-size:clamp(9px,calc(var(--S)*.016),14px);color:#9a8e7b;font-style:italic;font-family:Georgia,serif}
+.hand .hint{position:absolute;inset:0;display:grid;place-items:center;padding:0 8%;text-align:center;color:#6d6252;font:italic clamp(10px,calc(var(--S)*.02),17px) Georgia,serif;pointer-events:none}
+.hand .hint[hidden]{display:none}
+
+.layer{position:absolute;inset:0;pointer-events:none}
+
+/* ---------- header bar ---------- */
+.bar{position:absolute;left:0;right:0;top:0;height:calc(var(--S)*var(--hdr));z-index:4000000;display:flex;align-items:center;gap:1em;padding:0 2.2%;
+  background:#1a1512;border-bottom:calc(var(--S)*.006) solid var(--accent);font-size:clamp(9px,calc(var(--S)*.0165),15px)}
+.title{display:flex;align-items:center;gap:.55em;font:700 1.25em Georgia,"Times New Roman",serif;white-space:nowrap}
+.dot{width:.8em;height:.8em;border-radius:50%;background:var(--accent)}
+.btns{display:flex;gap:.45em;align-items:center;flex:1;min-width:0}
+.bar button{font:inherit;color:#f1e9d8;background:#2c231b;border:1px solid #4d4033;border-radius:.5em;padding:.35em .75em;cursor:pointer;white-space:nowrap}
+.bar button:hover{background:#382d23}
+.bar button[aria-pressed=true]{background:var(--accent);color:#161210;border-color:var(--accent)}
+.bar button[data-armed]{background:#a63a2a;border-color:#a63a2a}
+.dealwrap{display:flex;gap:.25em}
+.dealn{width:3.3em;font:inherit;color:#f1e9d8;background:#120e0b;border:1px solid #4d4033;border-radius:.5em;padding:.3em .3em .3em .5em}
+.chips{display:flex;gap:.45em;margin-left:auto}
+.chip{display:flex;align-items:center;gap:.3em;padding:.15em .6em;border-radius:99px;background:#241d17;border:1px solid #3d3228;font-variant-numeric:tabular-nums}
+.chip i{width:.7em;height:.7em;border-radius:50%;background:var(--c)}
+.chip.me{border-color:var(--c)}
+@container (max-width:620px){.title .nm{display:none}}
+@container (max-width:520px){.chips{display:none}}
+
+/* ---------- cards ---------- */
+.card{position:absolute;width:var(--cw);height:calc(var(--cw)*1.4);margin-left:calc(var(--cw)/-2);margin-top:calc(var(--cw)*-.7);
+  font-size:calc(var(--cw)*.2);perspective:calc(var(--cw)*9);pointer-events:auto;touch-action:none;cursor:grab;
+  transition:left .38s cubic-bezier(.2,.8,.2,1),top .38s cubic-bezier(.2,.8,.2,1),transform .15s}
+.card.dragging{transition:transform .15s;cursor:grabbing;transform:scale(1.05)}
+.card .inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.3,.7,.2,1)}
+.card.down .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:.42em;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.2),0 .06em .18em rgba(0,0,0,.55)}
+.card.dragging .face{box-shadow:inset 0 0 0 1px rgba(0,0,0,.2),0 .55em 1.1em rgba(0,0,0,.5)}
+.face.front{background:#fbf9f2;color:var(--ink,#1c1c1c);font-family:Georgia,"Times New Roman",serif}
+.face.front.img{background-size:cover;background-position:center;background-color:#d9d4c7}
+.face.back{transform:rotateY(180deg);border:.32em solid #f6f1e4;background-color:var(--back1);
+  background-image:var(--backimg),repeating-linear-gradient(45deg,var(--back1) 0 .3em,color-mix(in srgb,var(--back1) 72%,#fff) .3em .6em);
+  background-size:cover,auto;background-position:center}
+.corner{position:absolute;display:flex;flex-direction:column;align-items:center;line-height:1}
+.corner.tl{left:.4em;top:.35em}
+.corner.br{right:.4em;bottom:.35em;transform:rotate(180deg)}
+.corner b{font-size:1.3em;letter-spacing:-.05em}
+.corner i{font-style:normal;font-size:1.1em;margin-top:.1em}
+.pip{position:absolute;inset:0;display:grid;place-items:center;font-size:3.4em;line-height:1}
+.ttl{position:absolute;left:.5em;right:.5em;top:.55em;text-align:center;font-weight:700;font-size:1em;line-height:1.15}
+.body{position:absolute;left:.7em;right:.7em;top:2.9em;bottom:.7em;display:grid;place-items:center;text-align:center;font-size:.72em;line-height:1.3;overflow:hidden}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:.7em .4em .35em;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff;text-align:center;font:600 .78em/1.2 system-ui,sans-serif}
+.badge{position:absolute;top:-.6em;right:-.6em;z-index:2;min-width:1.9em;height:1.9em;padding:0 .4em;display:grid;place-items:center;border-radius:99px;
+  background:#15110e;color:#fff;border:1px solid rgba(255,255,255,.55);font:700 .7em system-ui,sans-serif;pointer-events:none}
+
+/* ---------- hover preview and menu ---------- */
+.preview{position:absolute;z-index:3000000;top:calc(var(--S)*(var(--hdr) + .02));right:2%;--cw:calc(var(--S)*.22);
+  width:var(--cw);height:calc(var(--cw)*1.4);font-size:calc(var(--cw)*.2);pointer-events:none;display:none}
+.preview.left{right:auto;left:2%}
+.preview .face{box-shadow:0 .5em 1.6em rgba(0,0,0,.65),inset 0 0 0 1px rgba(0,0,0,.2)}
+.ctx{position:absolute;z-index:3500000;display:none;min-width:12em;padding:.3em;background:#1c1713;border:1px solid #574a3c;border-radius:.6em;
+  box-shadow:0 12px 30px rgba(0,0,0,.6);font-size:clamp(11px,calc(var(--S)*.019),17px)}
+.ctx button{display:block;width:100%;text-align:left;font:inherit;color:#f1e9d8;background:none;border:0;border-radius:.4em;padding:.5em .8em;cursor:pointer}
+.ctx button:hover{background:#33291f}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .card,.card .inner,.rot{transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="setup">
+  <h1>Card table for four</h1>
+  <p class="lede">One table, four seats. Scroll down to your seat: each tabletop is turned 90° from the one above it. Cards you drop into your hand stay hidden from everyone else.</p>
+  <div class="row">
+    <label class="btn" for="deckfile">Load deck (.json)</label>
+    <input id="deckfile" type="file" accept=".json,application/json" hidden>
+    <label class="chk"><input type="checkbox" id="rot" checked> Turn each tabletop 90°</label>
+    <span class="jump" aria-label="Jump to a seat"><a href="#seat1">Player 1</a><a href="#seat2">Player 2</a><a href="#seat3">Player 3</a><a href="#seat4">Player 4</a></span>
+  </div>
+  <p id="status" class="status" role="status"></p>
+  <details>
+    <summary>How to play with it</summary>
+    <ul>
+      <li>Drag a card to move it. Drop it onto another card to stack it (hold <kbd>Ctrl</kbd> or <kbd>⌘</kbd> while dropping to overlap without snapping).</li>
+      <li>Double-click or double-tap a card to flip it. Hover over a card to see it larger.</li>
+      <li>Shift-drag, or switch on <em>Pile drag</em>, to move a whole pile at once.</li>
+      <li>Right-click or press and hold a card for more: flip or shuffle a pile, spread it out, or take a card into your hand.</li>
+      <li>Drag cards into the hand strip at the bottom of your tabletop to hide them from the others. Double-click a card in your hand to play it face up.</li>
+      <li><em>Deal</em> sends cards from the top of the table pile to every hand. <em>Gather</em> stacks all table cards in the center, <em>Shuffle</em> also mixes them face down, and <em>Reset</em> returns every card, hands included, to the center.</li>
+    </ul>
+  </details>
+</header>
+
+<main id="tables"></main>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= constants ================= */
+const SEATS = 4;
+const HEADER = 0.085, HAND = 0.20;                 // fractions of the seat square
+const TABLE_TOP = HEADER, TABLE_BOTTOM = 1 - HAND;
+const CW = 0.095, CH = CW * 1.4;                   // card size as a fraction of the seat square
+const PILE_EPS = 0.004;                            // cards this close count as one pile
+const CENTER = { x: 0.5, y: (TABLE_TOP + TABLE_BOTTOM) / 2 };
+const HAND_Y = 1 - HAND / 2 + 0.012;
+const COLORS = ['#e4572e', '#29a8ab', '#e9b44c', '#9b7bd0'];
+
+const root = document.documentElement;
+root.style.setProperty('--hdr', HEADER);
+root.style.setProperty('--hnd', HAND);
+root.style.setProperty('--cwf', CW);
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const h = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+};
+
+/* ================= state ================= */
+let deck = null;
+let cards = [];                 // shared game state: one entry per physical card
+let byId = new Map();
+let zTop = 100;
+let drag = null;
+let lastTap = null;
+let pileMode = false;
+let dealN = 5;
+let rotateSeats = true;
+const seats = [];
+const tables = document.getElementById('tables');
+const statusEl = document.getElementById('status');
+
+/* ================= building the four seats ================= */
+function buildSeat(i) {
+  const sec = h('section', 'seat');
+  sec.id = 'seat' + (i + 1);
+  sec.style.setProperty('--accent', COLORS[i]);
+  sec.setAttribute('aria-label', 'Player ' + (i + 1) + ' tabletop');
+  const chips = COLORS.map((c, p) =>
+    `<span class="chip${p === i ? ' me' : ''}" style="--c:${c}" title="Player ${p + 1}: cards in hand"><i></i><b>0</b></span>`).join('');
+  sec.innerHTML = `
+  <div class="rot">
+    <div class="felt"><div class="center"></div></div>
+    <div class="hand">
+      <span class="lab">Player ${i + 1}'s hand, hidden from the others</span>
+      <span class="hint">Drag cards here to hide them from the other players</span>
+    </div>
+    <div class="layer"></div>
+    <div class="preview"></div>
+    <div class="ctx" role="menu"></div>
+    <div class="bar">
+      <div class="title"><span class="dot"></span><span class="nm">Player ${i + 1}</span></div>
+      <div class="btns">
+        <span class="dealwrap"><button type="button" data-act="deal" title="Deal this many cards to each player">Deal</button><input class="dealn" type="number" min="1" max="26" value="${dealN}" aria-label="Cards per player"></span>
+        <button type="button" data-act="gather" title="Stack every card on the table in the center">Gather</button>
+        <button type="button" data-act="shuffle" title="Gather the table cards and shuffle them face down">Shuffle</button>
+        <button type="button" data-act="pile" aria-pressed="false" title="Drag whole piles (or hold Shift)">Pile drag</button>
+        <button type="button" data-act="reset" title="Return every card, hands included, to the center">Reset</button>
+      </div>
+      <div class="chips">${chips}</div>
+    </div>
+  </div>`;
+  tables.appendChild(sec);
+  const q = s => sec.querySelector(s);
+  const seat = {
+    idx: i, sec, rot: q('.rot'), layer: q('.layer'), preview: q('.preview'), ctx: q('.ctx'), bar: q('.bar'),
+    hint: q('.hint'), chipEls: [...sec.querySelectorAll('.chip b')], pileBtn: q('[data-act=pile]'),
+    dealInput: q('.dealn'), els: new Map(), hover: null, pvKey: '', angle: 0
+  };
+
+  seat.layer.addEventListener('pointerdown', e => onDown(e, i));
+  seat.layer.addEventListener('contextmenu', e => onContext(e, i));
+  seat.layer.addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse') return;
+    const el = e.target.closest('.card');
+    if (el) { seat.hover = el.dataset.id; updatePreview(i); }
+  });
+  seat.layer.addEventListener('pointerout', e => {
+    if (e.pointerType !== 'mouse') return;
+    const el = e.target.closest('.card');
+    if (!el) return;
+    const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.card') : null;
+    if (!to) { seat.hover = null; updatePreview(i); }
+  });
+  seat.rot.addEventListener('pointerdown', e => {
+    if (!e.target.closest('.ctx')) closeMenus();
+    if (!e.target.closest('.card') && !e.target.closest('.bar')) { seat.hover = null; updatePreview(i); }
+  }, true);
+  seat.bar.addEventListener('click', e => onBar(e, i));
+  seat.dealInput.addEventListener('input', () => {
+    dealN = clamp(parseInt(seat.dealInput.value, 10) || 1, 1, 26);
+    seats.forEach(s => { if (s !== seat) s.dealInput.value = dealN; });
+  });
+  return seat;
+}
+
+/* ================= card faces ================= */
+function buildFace(d) {
+  const f = h('div', 'face front');
+  if (d.bg) f.style.background = d.bg;
+  if (d.color) f.style.setProperty('--ink', d.color);
+  if (d.image) {
+    f.classList.add('img');
+    f.style.backgroundImage = 'url(' + JSON.stringify(String(d.image)) + ')';
+    if (d.caption) f.append(h('div', 'cap', String(d.caption)));
+  } else if (d.rank !== undefined && d.suit !== undefined) {
+    const corner = cls => {
+      const c = h('div', 'corner ' + cls);
+      c.append(h('b', '', String(d.rank)), h('i', '', String(d.suit)));
+      return c;
+    };
+    f.append(corner('tl'), h('div', 'pip', String(d.suit)), corner('br'));
+  } else {
+    f.append(h('div', 'ttl', String(d.title ?? d.name ?? '')));
+    if (d.text) f.append(h('div', 'body', String(d.text)));
+  }
+  return f;
+}
+
+function makeCardEl(c) {
+  const el = h('div', 'card down');
+  el.dataset.id = c.id;
+  const inner = h('div', 'inner');
+  inner.append(buildFace(c.data), h('div', 'face back'));
+  const badge = h('span', 'badge');
+  badge.style.display = 'none';
+  el.append(inner, badge);
+  el._badge = badge;
+  return el;
+}
+
+/* ================= deck loading ================= */
+function standardDeck() {
+  const suits = [['♠', 'Spades', '#1c1c1c'], ['♥', 'Hearts', '#c0392b'], ['♦', 'Diamonds', '#c0392b'], ['♣', 'Clubs', '#1c1c1c']];
+  const ranks = [['A', 'Ace'], ['2', 'Two'], ['3', 'Three'], ['4', 'Four'], ['5', 'Five'], ['6', 'Six'], ['7', 'Seven'],
+                 ['8', 'Eight'], ['9', 'Nine'], ['10', 'Ten'], ['J', 'Jack'], ['Q', 'Queen'], ['K', 'King']];
+  const list = [];
+  suits.forEach(([s, sn, col]) => ranks.forEach(([r, rn]) =>
+    list.push({ id: r + sn[0], name: rn + ' of ' + sn, rank: r, suit: s, color: col })));
+  return { name: 'Standard 52-card deck', back: { color: '#7a1f2b' }, cards: list };
+}
+
+function normalizeDeck(d) {
+  if (Array.isArray(d)) d = { cards: d };
+  if (!d || !Array.isArray(d.cards) || !d.cards.length) throw new Error('The file needs a "cards" list with at least one card.');
+  return { name: d.name || d.deckName || 'Custom deck', back: d.back || {}, cards: d.cards.filter(c => c && typeof c === 'object') };
+}
+
+function loadDeck(raw) {
+  deck = normalizeDeck(raw);
+  root.style.setProperty('--back1', deck.back.color || '#7a1f2b');
+  root.style.setProperty('--backimg', deck.back.image ? 'url(' + JSON.stringify(String(deck.back.image)) + ')' : 'none');
+  cards = []; byId = new Map(); zTop = 100;
+  let n = 0;
+  deck.cards.forEach(cd => {
+    const count = Number.isInteger(cd.count) && cd.count > 0 ? cd.count : 1;
+    for (let k = 0; k < count; k++) {
+      const c = { id: 'c' + (n++), data: cd, faceUp: false, owner: null, X: CENTER.x, Y: CENTER.y, z: ++zTop, h: 0, dragging: false };
+      cards.push(c); byId.set(c.id, c);
+    }
+  });
+  seats.forEach(seat => {
+    seat.layer.replaceChildren();
+    seat.els = new Map(); seat.hover = null; seat.pvKey = '';
+    cards.forEach(c => { const el = makeCardEl(c); seat.els.set(c.id, el); seat.layer.append(el); });
+  });
+  render();
+}
+
+/* ================= geometry ================= */
+// Pointer position in a seat's own (unrotated) frame, as fractions 0..1 of the seat square.
+function localPoint(s, e) {
+  const seat = seats[s];
+  const r = seat.rot.getBoundingClientRect();
+  const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+  const a = seat.angle * Math.PI / 180, S = seat.rot.offsetWidth;
+  const u = dx * Math.cos(a) + dy * Math.sin(a);
+  const v = -dx * Math.sin(a) + dy * Math.cos(a);
+  return { x: (u + S / 2) / S, y: (v + S / 2) / S };
+}
+
+function handSlots(n) {
+  if (n <= 0) return [];
+  const step = n > 1 ? Math.min(CW * 1.08, (0.92 - CW) / (n - 1)) : 0;
+  const total = step * (n - 1);
+  return Array.from({ length: n }, (_, i) => 0.5 - total / 2 + i * step);
+}
+
+const onTable = c => c.owner === null && !c.dragging;
+const near = (a, b) => Math.abs(a.X - b.X) < PILE_EPS && Math.abs(a.Y - b.Y) < PILE_EPS;
+const pileOf = c => cards.filter(d => onTable(d) && near(d, c));
+function pileTops() {
+  const table = cards.filter(onTable), m = new Map();
+  for (const c of table) {
+    let n = 0, top = true;
+    for (const d of table) if (near(c, d)) { n++; if (d.z > c.z) top = false; }
+    if (top && n > 1) m.set(c, n);
+  }
+  return m;
+}
+const nextH = s => cards.reduce((m, c) => c.owner === s ? Math.max(m, c.h + 1) : m, 0);
+
+/* ================= rendering ================= */
+function render() {
+  const hands = Array.from({ length: SEATS }, () => []);
+  for (const c of cards) if (c.owner !== null && !c.dragging) hands[c.owner].push(c);
+  hands.forEach(l => l.sort((a, b) => a.h - b.h));
+  const tops = pileTops();
+  const counts = [0, 0, 0, 0];
+  for (const c of cards) if (c.owner !== null) counts[c.owner]++;
+
+  for (let s = 0; s < SEATS; s++) {
+    const seat = seats[s], list = hands[s];
+    const inserting = !!(drag && drag.moved && drag.seat === s && drag.group.length === 1 && drag.leader.owner === s);
+    const slots = handSlots(list.length + (inserting ? 1 : 0));
+    const idxOf = new Map(list.map((c, i) => [c, i]));
+
+    for (const c of cards) {
+      const el = seat.els.get(c.id);
+      if (!el) continue;
+      let o;
+      if (c.dragging) {
+        const mine = drag && drag.seat === s;
+        const visible = mine || (c.owner === null && !(drag && drag.startedInHand));
+        o = visible ? { show: true, X: c.X, Y: c.Y, z: 2000000 + c.z, up: (mine && c.owner === s) ? true : c.faceUp, drag: true } : { show: false };
+      } else if (c.owner === null) {
+        o = { show: true, X: c.X, Y: c.Y, z: c.z, up: c.faceUp, badge: tops.get(c) || 0 };
+      } else if (c.owner === s) {
+        let slot = idxOf.get(c);
+        if (inserting && slot >= drag.insertIdx) slot++;
+        o = { show: true, X: slots[slot], Y: HAND_Y, z: 1000000 + slot, up: true };
+      } else {
+        o = { show: false };
+      }
+      if (!o.show) { el.style.display = 'none'; continue; }
+      el.style.display = '';
+      el.style.left = (o.X * 100) + '%';
+      el.style.top = (o.Y * 100) + '%';
+      el.style.zIndex = o.z;
+      el.classList.toggle('down', !o.up);
+      el.classList.toggle('dragging', !!o.drag);
+      el._pos = { x: o.X, y: o.Y };
+      if (o.badge > 1) { el._badge.textContent = o.badge; el._badge.style.display = ''; }
+      else el._badge.style.display = 'none';
+    }
+    seat.hint.hidden = counts[s] > 0;
+    counts.forEach((n, p) => { seat.chipEls[p].textContent = n; });
+    updatePreview(s);
+  }
+}
+
+function updatePreview(s) {
+  const seat = seats[s], pv = seat.preview;
+  const c = seat.hover ? byId.get(seat.hover) : null;
+  const visible = c && !(drag && drag.moved) && ((c.owner === null && c.faceUp) || c.owner === s);
+  if (!visible) { pv.style.display = 'none'; seat.pvKey = ''; return; }
+  if (seat.pvKey !== c.id) { pv.replaceChildren(buildFace(c.data)); seat.pvKey = c.id; }
+  const el = seat.els.get(c.id);
+  pv.classList.toggle('left', !!(el && el._pos && el._pos.x > 0.5));
+  pv.style.display = 'block';
+}
+
+function closeMenus() { seats.forEach(s => { s.ctx.style.display = 'none'; }); }
+
+/* ================= actions on the shared table ================= */
+function shuffleArr(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function gather() {
+  cards.filter(onTable).sort((a, b) => a.z - b.z).forEach(c => { c.X = CENTER.x; c.Y = CENTER.y; c.z = ++zTop; });
+}
+function shuffleAll() {
+  shuffleArr(cards.filter(onTable)).forEach(c => { c.X = CENTER.x; c.Y = CENTER.y; c.faceUp = false; c.z = ++zTop; });
+}
+function resetAll() {
+  cards.forEach(c => { c.owner = null; c.dragging = false; c.faceUp = false; c.X = CENTER.x; c.Y = CENTER.y; c.z = ++zTop; c.h = 0; });
+}
+function deal(n) {
+  const pile = cards.filter(onTable).sort((a, b) => b.z - a.z);   // top of the stack first
+  let i = 0;
+  for (let r = 0; r < n; r++) for (let s = 0; s < SEATS; s++) {
+    const c = pile[i++];
+    if (!c) return;
+    c.owner = s; c.h = nextH(s);
+  }
+}
+function toHand(c, s) { c.owner = s; c.h = nextH(s); }
+function playFromHand(c, up) {
+  c.owner = null; c.faceUp = up; c.z = ++zTop;
+  c.X = CENTER.x + (Math.random() - 0.5) * 0.14;
+  c.Y = CENTER.y + (Math.random() - 0.5) * 0.14;
+}
+function flipPile(c) {
+  const pile = pileOf(c).sort((a, b) => a.z - b.z), zs = pile.map(p => p.z);
+  pile.slice().reverse().forEach((p, i) => { p.z = zs[i]; p.faceUp = !p.faceUp; });
+}
+function shufflePile(c) {
+  const pile = pileOf(c), zs = pile.map(p => p.z).sort((a, b) => a - b);
+  shuffleArr(pile).forEach((p, i) => { p.z = zs[i]; });
+}
+function spread(c) {
+  const pile = pileOf(c).sort((a, b) => a.z - b.z), n = pile.length;
+  if (n < 2) return;
+  const step = Math.min(CW * 0.42, 0.8 / (n - 1)), total = step * (n - 1);
+  const lo = 0.06 + CW / 2, hi = 0.94 - CW / 2 - total;
+  const start = Math.max(lo, Math.min(hi, c.X - total / 2));
+  pile.forEach((p, i) => { p.X = start + i * step; });
+}
+function snapGroup(leader, group) {
+  let best = null, bd = Infinity;
+  for (const t of cards) {
+    if (!onTable(t) || group.includes(t)) continue;
+    const dx = Math.abs(t.X - leader.X), dy = Math.abs(t.Y - leader.Y);
+    if (dx < CW * 0.4 && dy < CH * 0.4 && dx * dx + dy * dy < bd) { bd = dx * dx + dy * dy; best = t; }
+  }
+  if (!best) return;
+  const dx = best.X - leader.X, dy = best.Y - leader.Y;
+  group.forEach(g => { g.X += dx; g.Y += dy; });
+  leader.X = best.X; leader.Y = best.Y;
+}
+
+/* ================= toolbar, menu ================= */
+function syncPile() { seats.forEach(s => s.pileBtn.setAttribute('aria-pressed', String(pileMode))); }
+function disarm(b) { delete b.dataset.armed; b.textContent = 'Reset'; }
+
+function onBar(e, s) {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'deal') deal(dealN);
+  else if (a === 'gather') gather();
+  else if (a === 'shuffle') shuffleAll();
+  else if (a === 'pile') { pileMode = !pileMode; syncPile(); return; }
+  else if (a === 'reset') {
+    if (b.dataset.armed) { clearTimeout(b._t); disarm(b); resetAll(); }
+    else { b.dataset.armed = '1'; b.textContent = 'Really?'; b._t = setTimeout(() => disarm(b), 2500); return; }
+  }
+  render();
+}
+
+function openMenu(s, c, p) {
+  closeMenus();
+  const seat = seats[s], items = [];
+  if (c.owner === s) {
+    items.push(['Play face up', () => playFromHand(c, true)], ['Play face down', () => playFromHand(c, false)]);
+  } else if (c.owner === null) {
+    const pile = pileOf(c);
+    items.push([c.faceUp ? 'Turn face down' : 'Turn face up', () => { c.faceUp = !c.faceUp; }]);
+    if (pile.length > 1) items.push(
+      ['Flip whole pile (' + pile.length + ')', () => flipPile(c)],
+      ['Shuffle pile', () => shufflePile(c)],
+      ['Spread pile out', () => spread(c)]);
+    items.push(['Take into my hand', () => toHand(c, s)]);
+  }
+  seat.ctx.replaceChildren();
+  items.forEach(([label, fn]) => {
+    const b = h('button', '', label);
+    b.type = 'button'; b.setAttribute('role', 'menuitem');
+    b.addEventListener('click', () => { fn(); closeMenus(); render(); });
+    seat.ctx.append(b);
+  });
+  seat.ctx.style.left = (clamp(p.x, 0.02, 0.68) * 100) + '%';
+  seat.ctx.style.top = (clamp(p.y, 0.09, 0.6) * 100) + '%';
+  seat.ctx.style.display = 'block';
+}
+
+function onContext(e, s) {
+  const el = e.target.closest('.card');
+  if (!el) return;
+  e.preventDefault();
+  if (drag) drag.cancelled = true;
+  const c = byId.get(el.dataset.id);
+  if (c) openMenu(s, c, localPoint(s, e));
+}
+
+/* ================= dragging ================= */
+function onDown(e, s) {
+  if (e.button !== 0) return;
+  const el = e.target.closest('.card');
+  if (!el) return;
+  const c = byId.get(el.dataset.id);
+  if (!c) return;
+  e.preventDefault();
+  const p = localPoint(s, e), pos = el._pos || { x: c.X, y: c.Y };
+  drag = { seat: s, leader: c, group: [c], moved: false, startedInHand: false, insertIdx: 0, cancelled: false,
+           cx: e.clientX, cy: e.clientY, offX: p.x - pos.x, offY: p.y - pos.y, id: e.pointerId, type: e.pointerType, timer: 0 };
+  if (e.pointerType !== 'mouse') {
+    const d = drag;
+    d.timer = setTimeout(() => { if (drag === d && !d.moved) { d.cancelled = true; openMenu(s, c, p); } }, 550);
+  }
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
+}
+
+function startDrag(e) {
+  const L = drag.leader;
+  clearTimeout(drag.timer);
+  drag.moved = true;
+  if (L.owner !== null) { drag.startedInHand = true; L.faceUp = true; }
+  else if (pileMode !== e.shiftKey) drag.group = pileOf(L);
+  drag.group.sort((a, b) => a.z - b.z).forEach(g => { g.dragging = true; g.z = ++zTop; });
+  closeMenus();
+}
+
+function onMove(e) {
+  if (!drag || e.pointerId !== drag.id || drag.cancelled) return;
+  if (!drag.moved) {
+    if (Math.hypot(e.clientX - drag.cx, e.clientY - drag.cy) < 6) return;
+    startDrag(e);
+  }
+  const s = drag.seat, L = drag.leader, p = localPoint(s, e);
+  const cx = p.x - drag.offX, cy = p.y - drag.offY;
+  if (drag.group.length === 1 && p.y > 1 - HAND && p.x > 0 && p.x < 1) {
+    // over the hand strip: the card joins this player's hand
+    L.owner = s; L.X = cx; L.Y = cy;
+    const others = cards.filter(x => x.owner === s && x !== L).length;
+    const slots = handSlots(others + 1);
+    let bi = 0, bd = Infinity;
+    slots.forEach((sx, i) => { const d = Math.abs(sx - p.x); if (d < bd) { bd = d; bi = i; } });
+    drag.insertIdx = bi;
+  } else {
+    L.owner = null;
+    const nx = clamp(cx, 0.03, 0.97), ny = clamp(cy, TABLE_TOP + 0.04, TABLE_BOTTOM + 0.03);
+    const dx = nx - L.X, dy = ny - L.Y;
+    drag.group.forEach(g => { g.X += dx; g.Y += dy; });
+  }
+  render();
+}
+
+function onUp(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  window.removeEventListener('pointermove', onMove);
+  window.removeEventListener('pointerup', onUp);
+  window.removeEventListener('pointercancel', onUp);
+  clearTimeout(drag.timer);
+  const d = drag;
+  drag = null;
+  if (d.cancelled) { d.group.forEach(g => { g.dragging = false; }); render(); return; }
+  if (!d.moved) { handleTap(d); render(); return; }
+
+  const L = d.leader, s = d.seat;
+  d.group.forEach(g => { g.dragging = false; });
+  if (d.group.length === 1 && L.owner === s) {
+    const others = cards.filter(x => x.owner === s && x !== L).sort((a, b) => a.h - b.h);
+    others.splice(Math.min(d.insertIdx, others.length), 0, L);
+    others.forEach((x, i) => { x.h = i; });
+  } else {
+    L.owner = null;
+    if (d.startedInHand) L.faceUp = true;
+    if (!(e.ctrlKey || e.metaKey)) snapGroup(L, d.group);
+  }
+  render();
+}
+
+function handleTap(d) {
+  const c = d.leader, s = d.seat, now = performance.now();
+  if (d.type !== 'mouse') seats[s].hover = c.id;
+  if (lastTap && lastTap.id === c.id && now - lastTap.t < 380) {
+    lastTap = null;
+    if (c.owner === s) playFromHand(c, true);
+    else if (c.owner === null) c.faceUp = !c.faceUp;
+  } else {
+    lastTap = { id: c.id, t: now };
+  }
+}
+
+/* ================= page controls ================= */
+function applyRotation() {
+  seats.forEach((seat, i) => {
+    seat.angle = rotateSeats ? i * 90 : 0;
+    seat.rot.style.transform = 'rotate(' + seat.angle + 'deg)';
+  });
+}
+function setStatus(msg, isErr) { statusEl.textContent = msg; statusEl.classList.toggle('err', !!isErr); }
+
+document.getElementById('rot').addEventListener('change', e => { rotateSeats = e.target.checked; applyRotation(); });
+document.getElementById('deckfile').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    loadDeck(JSON.parse(await f.text()));
+    setStatus('Loaded “' + deck.name + '” from ' + f.name + ': ' + cards.length + ' cards.');
+  } catch (err) {
+    setStatus('Could not load ' + f.name + '. ' + err.message, true);
+  }
+  e.target.value = '';
+});
+addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.key.toLowerCase() !== 'f') return;
+  for (const seat of seats) {
+    const c = seat.hover && byId.get(seat.hover);
+    if (c && c.owner === null) { c.faceUp = !c.faceUp; render(); break; }
+  }
+});
+
+/* ================= start ================= */
+for (let i = 0; i < SEATS; i++) seats.push(buildSeat(i));
+applyRotation();
+
+(async function boot() {
+  const url = new URLSearchParams(location.search).get('deck') || 'cards.json';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    loadDeck(await r.json());
+    setStatus('Loaded “' + deck.name + '” from ' + url + ': ' + cards.length + ' cards, stacked in the center.');
+  } catch (err) {
+    loadDeck(standardDeck());
+    setStatus('Using the built-in 52-card deck. Could not read ' + url + ' (browsers block this when a page is opened straight from disk); use “Load deck (.json)” to pick your file.');
+  }
+})();
+})();
+</script>
+</body>
+</html>
